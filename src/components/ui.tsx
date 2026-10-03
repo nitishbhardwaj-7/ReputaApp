@@ -1,7 +1,10 @@
 import type { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View, type StyleProp, type TextInputProps, type ViewStyle } from 'react-native';
 
+import Svg, { Path } from 'react-native-svg';
+
 import type { SourceMeta } from '@/lib/format';
+import { LOGOS } from '@/lib/logos';
 import type { Sentiment } from '@/lib/types';
 import { colors, radius, space, type } from '@/theme';
 
@@ -76,6 +79,15 @@ export function Tag({ label, bg = colors.surfaceMuted, fg = colors.inkSecondary 
 }
 
 export function SourceIcon({ source, size = 22 }: { source: SourceMeta; size?: number }) {
+  const logo = LOGOS[source.id];
+  // The platform's own mark where we have one; a lettered tile for anything else.
+  if (logo) {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" accessibilityLabel={source.label}>
+        {logo.paths.map((p, i) => <Path key={i} d={p.d} fill={p.fill ?? logo.color} />)}
+      </Svg>
+    );
+  }
   return (
     <View style={{ width: size, height: size, borderRadius: 5, backgroundColor: source.color, alignItems: 'center', justifyContent: 'center' }}>
       <Text style={{ color: '#fff', fontSize: size * 0.5, fontWeight: '700' }}>{source.glyph}</Text>

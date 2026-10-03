@@ -153,7 +153,7 @@ export default function OverviewScreen() {
             <Card style={{ gap: space.md }}>
               <Text style={type.heading}>Mentions by source</Text>
               {sourceList.length === 0 ? (
-                <Text style={type.secondary}>No mentions yet. Add keywords on the website to start scanning.</Text>
+                <Text style={type.secondary}>No mentions yet. Add a keyword in the Sources tab to start scanning.</Text>
               ) : (
                 sourceList.map((s) => (
                   <View key={s.label} style={{ gap: 5 }}>

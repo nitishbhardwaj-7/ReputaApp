@@ -81,6 +81,25 @@ export interface MentionsResponse {
   pagination: { page: number; pageSize: number; total: number };
 }
 
+export interface CardStats {
+  mentions: number;
+  positive: number;
+  negative: number;
+  neutral: number;
+}
+
+/** A keyword (or a competitor) tracked on one platform. */
+export interface TrackedCard {
+  id: string;
+  platform: string;
+  keyword: string;
+  enabled: boolean;
+  lastRunAt?: string | null;
+  stats?: CardStats;
+}
+
+export type CompetitorSummary = { keyword: string } & CardStats;
+
 export interface PlanLimits {
   mentionsPerMonth: number;
   keywords: number;

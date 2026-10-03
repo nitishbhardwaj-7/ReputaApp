@@ -54,7 +54,7 @@ export default function SignUp() {
             <Field label="Password" value={password} onChangeText={setPassword} placeholder="At least 8 characters"
               secureTextEntry textContentType="newPassword" autoComplete="new-password" returnKeyType="go" onSubmitEditing={submit} />
             <Button label="Start free trial" onPress={submit} loading={busy} />
-            <Text style={[type.small, { textAlign: 'center' }]}>Add keywords and sources on the website after signing up.</Text>
+            <Text style={[type.small, { textAlign: 'center' }]}>Add your first keyword in the Sources tab after signing up.</Text>
           </View>
 
           <View style={styles.alt}>

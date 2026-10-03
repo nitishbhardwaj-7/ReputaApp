@@ -41,6 +41,7 @@ export default function TabsLayout() {
           tabBarBadgeStyle: { backgroundColor: colors.negative, color: '#fff', fontSize: 10 },
         }}
       />
+      <Tabs.Screen name="sources" options={{ title: 'Sources', tabBarIcon: ({ color }) => <Feather name="layers" size={22} color={color} /> }} />
       <Tabs.Screen name="account" options={{ title: 'Account', tabBarIcon: ({ color }) => <Feather name="user" size={22} color={color} /> }} />
     </Tabs>
   );

@@ -1,5 +1,5 @@
 import { API_URL } from './config';
-import type { Billing, Mention, MentionsResponse, OverTimeRow, Overview, Sentiment, SessionResponse } from './types';
+import type { Billing, CompetitorSummary, Mention, MentionsResponse, OverTimeRow, Overview, Sentiment, SessionResponse, TrackedCard } from './types';
 
 export class ApiError extends Error {
   status: number;
@@ -98,6 +98,23 @@ export const api = {
   billing: () => request<Billing>('/billing'),
   /** One mention by id: used when a notification opens the app straight onto it. */
   mention: (kind: string, id: string) => request<Mention>(`/items/${kind}/${id}`),
+
+  // ---- keyword cards (your brand)
+  cards: () => request<{ cards: TrackedCard[] }>('/platform-keywords'),
+  addCard: (platform: string, keyword: string) => request<{ ok: boolean }>('/platform-keywords', { method: 'POST', body: { platform, keyword } }),
+  deleteCard: (id: string) => request<{ ok: boolean }>(`/platform-keywords/${id}`, { method: 'DELETE' }),
+  toggleCard: (id: string) => request<{ ok: boolean }>(`/platform-keywords/${id}/toggle`, { method: 'PATCH' }),
+  runCard: (id: string) => request<{ ok: boolean }>(`/platform-keywords/run-card/${id}`, { method: 'POST', body: {} }),
+  runAllCards: () => request<{ ok: boolean }>('/platform-keywords/run-all', { method: 'POST', body: {} }),
+
+  // ---- competitor cards
+  competitorCards: () => request<{ cards: TrackedCard[] }>('/competitor-cards/cards'),
+  addCompetitorCard: (platform: string, keyword: string) => request<{ ok: boolean }>('/competitor-cards/cards', { method: 'POST', body: { platform, keyword } }),
+  deleteCompetitorCard: (id: string) => request<{ ok: boolean }>(`/competitor-cards/cards/${id}`, { method: 'DELETE' }),
+  toggleCompetitorCard: (id: string) => request<{ ok: boolean }>(`/competitor-cards/cards/${id}/toggle`, { method: 'PATCH' }),
+  runCompetitorCard: (id: string) => request<{ ok: boolean }>(`/competitor-cards/cards/run-card/${id}`, { method: 'POST', body: {} }),
+  runAllCompetitorCards: () => request<{ ok: boolean }>('/competitor-cards/cards/run-all', { method: 'POST', body: {} }),
+  competitorOverview: () => request<{ totalMentions: number; competitors?: CompetitorSummary[] }>('/competitors/overview'),
 
   // ---- push
   registerDevice: (token: string, platform: string) => request<{ ok: boolean }>('/devices', { method: 'POST', body: { token, platform } }),

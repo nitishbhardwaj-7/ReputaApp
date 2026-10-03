@@ -101,9 +101,9 @@ export default function AccountScreen() {
         </Card>
 
         <Card style={{ gap: space.sm }}>
-          <Text style={type.heading}>Keywords and sources</Text>
-          <Text style={type.secondary}>Add keywords, sources and competitors, and export reports, on the website.</Text>
-          <Button label="Open the website" variant="secondary" onPress={() => WebBrowser.openBrowserAsync(`${WEB_URL}/app/sources`)} />
+          <Text style={type.heading}>Reports and exports</Text>
+          <Text style={type.secondary}>Monthly reports and Excel exports are on the website. Keywords and competitors are in the Sources tab.</Text>
+          <Button label="Open reports on the website" variant="secondary" onPress={() => WebBrowser.openBrowserAsync(`${WEB_URL}/app/reports`)} />
         </Card>
 
         <Button label="Sign out" variant="quiet" loading={leaving} onPress={async () => { setLeaving(true); await signOut(); }} />
