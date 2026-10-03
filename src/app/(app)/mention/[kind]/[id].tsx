@@ -1,9 +1,9 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { Button, Card, Empty, ErrorNote, SentimentBadge, SourceIcon } from '@/components/ui';
+import { Button, Card, Empty, ErrorNote, Loading, SentimentBadge, SourceIcon } from '@/components/ui';
 import { api } from '@/lib/api';
 import { formatDate, mentionCache, mentionSource, mentionUrl, timeAgo } from '@/lib/format';
 import type { Mention } from '@/lib/types';
@@ -44,13 +44,31 @@ export default function MentionScreen() {
   const [mention, setMention] = useState<Mention | undefined>(() => mentionCache.get(kind, id));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [missing, setMissing] = useState(false);
+
+  // Opened from a notification (no list behind it): fetch the mention by id.
+  useEffect(() => {
+    if (mentionCache.get(kind, id)) return;
+    let alive = true;
+    api
+      .mention(kind, id)
+      .then((m) => {
+        if (!alive) return;
+        mentionCache.put(m);
+        setMention(m);
+      })
+      .catch(() => alive && setMissing(true));
+    return () => {
+      alive = false;
+    };
+  }, [kind, id]);
 
   if (!mention) {
-    // Opened without the list behind it (e.g. a cold deep link): send the user to the list.
+    if (!missing) return <View style={{ flex: 1, backgroundColor: colors.bg }}><Loading /></View>;
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg, justifyContent: 'center', padding: space.xl, gap: space.lg }}>
-        <Empty title="This mention isn't loaded" body="Open it from the Mentions or Alerts list." />
-        <Button label="Go to mentions" onPress={() => router.replace('/mentions')} />
+        <Empty title="This mention is no longer available" body="It may have been removed." />
+        <Button label="Go to alerts" onPress={() => router.replace('/alerts')} />
       </View>
     );
   }

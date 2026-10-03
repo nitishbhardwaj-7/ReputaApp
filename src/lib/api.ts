@@ -96,4 +96,10 @@ export const api = {
   resolve: (kind: Mention['type'], id: string, resolved: boolean) =>
     request<{ ok: boolean; id: string; resolvedAt: string | null }>(`/items/${kind}/${id}/resolve`, { method: 'PATCH', body: { resolved } }),
   billing: () => request<Billing>('/billing'),
+  /** One mention by id: used when a notification opens the app straight onto it. */
+  mention: (kind: string, id: string) => request<Mention>(`/items/${kind}/${id}`),
+
+  // ---- push
+  registerDevice: (token: string, platform: string) => request<{ ok: boolean }>('/devices', { method: 'POST', body: { token, platform } }),
+  unregisterDevice: (token: string) => request<{ ok: boolean }>('/devices', { method: 'DELETE', body: { token } }),
 };

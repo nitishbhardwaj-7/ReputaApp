@@ -1,6 +1,7 @@
 import { createContext, use, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { api, ApiError, setAuthToken, setUnauthorizedHandler } from './api';
+import { registerForPush, unregisterFromPush } from './push';
 import { clearToken, readToken, writeToken } from './storage';
 import type { Organization, SessionResponse, User } from './types';
 
@@ -56,6 +57,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     await writeToken(res.token);
     setUser(res.user);
     setOrganization(res.organization);
+    void registerForPush();
   }, []);
 
   // Launch: restore the stored token, renew it, and load the workspace.
@@ -76,6 +78,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         if (!alive) return;
         setUser(me.user);
         setOrganization(me.organization);
+        void registerForPush();
       } catch (err) {
         // Offline at launch keeps the token for next time; a rejected token is discarded.
         if (err instanceof ApiError && err.status === 401) await drop();
@@ -100,7 +103,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         await adopt(await api.signup({ name: name.trim(), email: clean, password, organizationName: workspace, brandName: workspace }));
       },
       signInWithGoogle: async (idToken) => adopt(await api.google(idToken)),
-      signOut: drop,
+      signOut: async () => {
+        // Unregister while the token still works, so this phone stops receiving alerts.
+        await unregisterFromPush();
+        await drop();
+      },
       reload: async () => {
         const me = await api.me();
         setUser(me.user);
